@@ -10,9 +10,14 @@ Provides:
 - Agent execution logic
 """
 
+import os
 from datetime import datetime
 from typing import Dict, Any, Optional
 from pathlib import Path
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
 
 try:
     from claude_agent_sdk import (
@@ -151,6 +156,14 @@ async def run_agent(
     Returns:
         Total token usage
     """
+
+    # Verify API key is set
+    api_key = os.getenv("ANTHROPIC_API_KEY")
+    if not api_key:
+        raise ValueError(
+            "ANTHROPIC_API_KEY environment variable not set. "
+            "Please create a .env file with your API key or set it in your environment."
+        )
 
     # Configure agent options
     options = ClaudeAgentOptions(

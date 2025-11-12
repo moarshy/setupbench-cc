@@ -1,0 +1,38 @@
+# Dockerfile.agent
+# Builds agent execution environment on top of any base image
+
+ARG BASE_IMAGE=ubuntu:22.04
+FROM ${BASE_IMAGE}
+
+# Install Python 3 and pip if not already present
+# Use non-interactive frontend to avoid prompts
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN if command -v apt-get >/dev/null 2>&1; then \
+        apt-get update && \
+        apt-get install -y --no-install-recommends \
+            python3 \
+            python3-pip \
+            python3-venv \
+            ca-certificates \
+            curl && \
+        rm -rf /var/lib/apt/lists/*; \
+    fi
+
+# Install Claude Agent SDK and dependencies
+RUN pip3 install --no-cache-dir --break-system-packages \
+    claude-agent-sdk \
+    python-dotenv \
+    pydantic
+
+# Copy setupbench_runner package
+COPY src/setupbench_runner /app/setupbench_runner
+
+# Copy in-container agent script
+COPY scripts/run_agent_in_container.py /app/run_agent_in_container.py
+
+# Set working directory to /testbed (where task files will be)
+WORKDIR /testbed
+
+# Agent will be invoked with:
+# python3 /app/run_agent_in_container.py <task_json> <api_key>

@@ -26,14 +26,30 @@ curl -LsSf https://astral.sh/uv/install.sh | sh
 uv sync
 ```
 
-### 3. Clone SetupBench
+### 3. Set Up API Key
+
+```bash
+# Copy the example environment file
+cp .env.example .env
+
+# Edit .env and add your Anthropic API key
+# Get your API key from: https://console.anthropic.com/settings/keys
+nano .env
+```
+
+Your `.env` file should look like:
+```bash
+ANTHROPIC_API_KEY=sk-ant-api03-...
+```
+
+### 4. Clone SetupBench
 
 ```bash
 git clone https://github.com/microsoft/SetupBench
 # The runner will automatically find SetupBench in parent or sibling directories
 ```
 
-### 4. Run Tasks
+### 5. Run Tasks
 
 ```bash
 # Single task
