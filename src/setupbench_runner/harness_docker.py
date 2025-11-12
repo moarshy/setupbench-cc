@@ -79,9 +79,14 @@ async def run_task_v2(
     print(f"Base Image: {base_image}")
     print(f"{'='*70}\n")
 
-    # Create workspace
+    # Create workspace (clean for agent)
     workspace = output_dir / "workspaces" / instance_id
     workspace.mkdir(parents=True, exist_ok=True)
+
+    # Create log directory (separate from workspace)
+    # Note: Logger will add instance_id subdirectory automatically
+    log_dir = output_dir / "logs"
+    log_dir.mkdir(parents=True, exist_ok=True)
 
     # Copy fixtures if they exist
     setupbench_paths = [
@@ -110,7 +115,7 @@ async def run_task_v2(
     print(f"\n🚀 Starting agent execution in container...")
 
     try:
-        with AgentContainer(agent_image, workspace, instance_id, api_key) as container:
+        with AgentContainer(agent_image, workspace, log_dir, instance_id, api_key) as container:
 
             # Run agent
             exit_code, stdout, stderr = container.run_agent(task)

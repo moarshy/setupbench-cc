@@ -97,6 +97,7 @@ class AgentContainer:
         self,
         agent_image: str,
         workspace: Path,
+        log_dir: Path,
         instance_id: str,
         api_key: str
     ):
@@ -106,6 +107,7 @@ class AgentContainer:
         Args:
             agent_image: Agent Docker image name
             workspace: Host workspace directory to mount to /testbed
+            log_dir: Host log directory to mount to /logs
             instance_id: Task instance ID
             api_key: Anthropic API key
         """
@@ -114,21 +116,26 @@ class AgentContainer:
 
         self.agent_image = agent_image
         self.workspace = workspace
+        self.log_dir = log_dir
         self.instance_id = instance_id
         self.api_key = api_key
         self.client = docker.from_env()
         self.container = None
 
     def __enter__(self):
-        """Start the Docker container with workspace mounted to /testbed."""
+        """Start the Docker container with workspace and logs mounted."""
         try:
+            # Ensure log directory exists
+            self.log_dir.mkdir(parents=True, exist_ok=True)
+
             # Start container in background
             self.container = self.client.containers.run(
                 self.agent_image,
                 command="/bin/bash -c 'tail -f /dev/null'",  # Keep alive
                 detach=True,
                 volumes={
-                    str(self.workspace.absolute()): {'bind': '/testbed', 'mode': 'rw'}
+                    str(self.workspace.absolute()): {'bind': '/testbed', 'mode': 'rw'},
+                    str(self.log_dir.absolute()): {'bind': '/logs', 'mode': 'rw'}
                 },
                 working_dir='/testbed',
                 name=f"setupbench-agent-{self.instance_id}",
@@ -171,8 +178,9 @@ class AgentContainer:
         # Run agent script inside container
         print(f"🤖 Running agent in container for {task['instance_id']}...")
 
+        # Pass as list to avoid shell quoting issues with special chars in JSON
         result = self.container.exec_run(
-            f"python3 /app/run_agent_in_container.py '{task_json}' '{self.api_key}'",
+            ["python3", "/app/run_agent_in_container.py", task_json, self.api_key],
             workdir="/testbed",
             demux=True,
             stream=False
@@ -206,8 +214,9 @@ class AgentContainer:
 
         print(f"✓ Running validation in fresh shell...")
 
+        # Pass as list to avoid shell quoting issues with special chars in command
         result = self.container.exec_run(
-            f"/bin/bash -c '{success_command}'",
+            ["/bin/bash", "-c", success_command],
             workdir="/testbed",
             demux=True
         )
@@ -234,44 +243,25 @@ class AgentContainer:
         if not self.container:
             raise RuntimeError("Container not started")
 
-        # Agent writes logs to /testbed/.agent_logs/<instance_id>/
-        container_log_dir = f"/testbed/.agent_logs/{self.instance_id}"
-
-        # Create host log directory
-        host_log_dir = output_dir / "logs" / self.instance_id
-        host_log_dir.mkdir(parents=True, exist_ok=True)
+        # Logs are written to mounted /logs directory (self.log_dir)
+        # which maps to /logs/<instance_id>/ in container
+        # No need to extract - they're already on the host!
 
         log_files = {}
 
-        # Copy each log file
+        # Check for each log file in the mounted directory
         for log_name in ["agent.log", "tools.jsonl", "messages.jsonl"]:
-            try:
-                # Get file from container
-                bits, stat = self.container.get_archive(f"{container_log_dir}/{log_name}")
-
-                # Extract tarball to host
-                import tarfile
-                import io
-
-                tar_stream = io.BytesIO()
-                for chunk in bits:
-                    tar_stream.write(chunk)
-                tar_stream.seek(0)
-
-                with tarfile.open(fileobj=tar_stream) as tar:
-                    # Extract to host directory
-                    tar.extractall(path=host_log_dir.parent)
-
-                log_files[log_name] = host_log_dir / log_name
-
-            except Exception as e:
-                print(f"Warning: Could not copy {log_name}: {e}")
+            log_path = self.log_dir / self.instance_id / log_name
+            if log_path.exists():
+                log_files[log_name] = log_path
+            else:
+                print(f"Warning: Log file not found: {log_path}")
 
         return log_files
 
     def collect_metrics(self) -> Dict[str, Any]:
         """
-        Collect metrics from container.
+        Collect metrics from mounted log directory.
 
         Returns:
             Dictionary with metrics
@@ -280,21 +270,11 @@ class AgentContainer:
             raise RuntimeError("Container not started")
 
         try:
-            # Get metrics file from container
-            bits, stat = self.container.get_archive("/testbed/.agent_metrics.json")
-
-            # Extract and parse
-            import tarfile
-            import io
-
-            tar_stream = io.BytesIO()
-            for chunk in bits:
-                tar_stream.write(chunk)
-            tar_stream.seek(0)
-
-            with tarfile.open(fileobj=tar_stream) as tar:
-                metrics_file = tar.extractfile(".agent_metrics.json")
-                metrics = json.load(metrics_file)
+            # Read metrics directly from mounted log directory
+            metrics_file = self.log_dir / "metrics.json"
+            if metrics_file.exists():
+                with open(metrics_file) as f:
+                    metrics = json.load(f)
 
             return metrics
 
