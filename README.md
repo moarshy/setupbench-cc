@@ -361,9 +361,10 @@ Explicitly instructs the agent to:
 
 ## Documentation
 
-- `docs/setupbench-summary.md` - Overview of SetupBench
-- `docs/benchmark-construction.md` - How dataset was built
-- `docs/claude-code-setupbench-plan-minimal.md` - Implementation plan
+- `docs/setupbench-summary.md` - Overview of SetupBench benchmark
+- `docs/setupbench-compliance.md` - SetupBench compliance verification
+- `docs/benchmark-construction.md` - How SetupBench dataset was built
+- `docs/code-reuse-analysis.md` - Analysis of code reuse opportunities with SetupBench
 
 ## Troubleshooting
 
