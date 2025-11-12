@@ -1,0 +1,21 @@
+{
+  "instance_id": "pytesseract-df9fce0",
+  "task_type": "reposetup",
+  "base_image": "ubuntu:22.04",
+  "success": true,
+  "validation_output": "Setup successful\n",
+  "wall_time_seconds": 394.02692,
+  "total_steps": 32,
+  "bash_calls": 22,
+  "read_calls": 4,
+  "write_calls": 0,
+  "edit_calls": 0,
+  "total_tokens": 1295671,
+  "errors": 0,
+  "messages": 61,
+  "logs": {
+    "agent.log": "smoke_test_simple_results/logs/pytesseract-df9fce0/agent.log",
+    "tools.jsonl": "smoke_test_simple_results/logs/pytesseract-df9fce0/tools.jsonl",
+    "messages.jsonl": "smoke_test_simple_results/logs/pytesseract-df9fce0/messages.jsonl"
+  }
+}

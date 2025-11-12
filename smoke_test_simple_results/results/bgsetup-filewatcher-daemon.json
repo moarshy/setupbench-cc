@@ -1,0 +1,21 @@
+{
+  "instance_id": "bgsetup-filewatcher-daemon",
+  "task_type": "bgsetup",
+  "base_image": "ubuntu:22.04",
+  "success": true,
+  "validation_output": "Setup successful\n",
+  "wall_time_seconds": 155.199384,
+  "total_steps": 20,
+  "bash_calls": 15,
+  "read_calls": 3,
+  "write_calls": 1,
+  "edit_calls": 1,
+  "total_tokens": 350531,
+  "errors": 0,
+  "messages": 36,
+  "logs": {
+    "agent.log": "smoke_test_simple_results/logs/bgsetup-filewatcher-daemon/agent.log",
+    "tools.jsonl": "smoke_test_simple_results/logs/bgsetup-filewatcher-daemon/tools.jsonl",
+    "messages.jsonl": "smoke_test_simple_results/logs/bgsetup-filewatcher-daemon/messages.jsonl"
+  }
+}
