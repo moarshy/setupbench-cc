@@ -1,0 +1,13 @@
+{
+  "language": "go",
+  "repo_url": "https://github.com/caddyserver/caddy",
+  "license_spdx": "Apache-2.0",
+  "success_command": "caddy list-modules | grep -q 'http' && echo 'Setup successful' || echo 'Setup failed'",
+  "notes": "After setup, you must add the caddy executable to the path",
+  "problem_statement": "You are in a benchmark that evaluates your ability to interpret documentation, install dependencies, configure, and build real-world open-source projects in a completely minimal environment.\n\nEnvironment Details\nYou are operating inside a fresh Ubuntu 22.04 environment with no tools or packages preinstalled \u2014 not even python3 or build-essential.\n\nKey constraints:\n\nYou must install all required dependencies globally using apt or other system-level installers.\nDo not create or use virtual environments (e.g., no venv, conda, or containerization).\nYour setup should be non-interactive and able to run in a headless CI environment.\nAssume you are starting from scratch \u2014 no assumptions about preinstalled tools.\n\nTask:\nYou must fully set up a GitHub repository. This may include installing dependencies, compiling and building the project, starting a server, etc. depending on the repository. Utilize the README and other documentation present in the repo the guide and inform your setup process.\n\nRepository URL:\nhttps://github.com/caddyserver/caddy\n\n\nAdditional Instructions:\n- The repository has been cloned into the /testbed directory so that the root of the GitHub repository maps directly to /testbed. \n- At the end of the setup, you will be evaluated by running a single-line success command to confirm the build was successful.\n- After setup, you must add the caddy executable to the path\n",
+  "base_commit": "782a3c7ac60c82311fe9fb8889dd843dfe26c0bc",
+  "instance_id": "caddy-782a3c7",
+  "image_tag": "setupbench.eval.x86_64.caddy-782a3c7:msbench-0.0.4",
+  "task_type": "reposetup",
+  "base_image": "ubuntu:22.04"
+}

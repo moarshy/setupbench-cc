@@ -1,13 +1,15 @@
 #!/usr/bin/env python3
 """
-Simplified Smoke Test - 4 Tasks (Multiple Base Images)
-=======================================================
+Simplified Smoke Test - 3 Ubuntu Tasks
+=======================================
 
-Tests 4 categories across different base images:
-1. Database Setup (ubuntu:22.04)
-2. Dependency Resolution (ruby:2.7)
-3. Background Service (ubuntu:22.04)
-4. Repo Setup (ubuntu:22.04)
+Tests 3 categories using ubuntu:22.04 base image:
+1. Database Setup (PostgreSQL)
+2. Background Service (File watcher daemon)
+3. Repo Setup (Pytesseract)
+
+Note: Only ubuntu:22.04 tasks are supported (77/93 tasks, 82.8% coverage).
+Ruby and Node tasks require unsupported base images.
 """
 
 import subprocess
@@ -31,7 +33,6 @@ BOLD = '\033[1m'
 
 TASKS = [
     ("1_database_setup.json", "Database Setup (PostgreSQL)"),
-    ("2_dependency_resolution.json", "Dependency Resolution (Ruby gem)"),
     ("3_background_service.json", "Background Service (File watcher)"),
     ("4_repo_setup.json", "Repo Setup (Pytesseract)"),
 ]
@@ -110,9 +111,10 @@ def run_task(task_file, task_name, num, total):
 
 
 def main():
-    print_header("Simple Smoke Test (4 Tasks - Multiple Base Images)")
+    print_header("Simple Smoke Test (3 Ubuntu Tasks)")
     print(f"Output: {OUTPUT_DIR}")
-    print(f"Tasks: {len(TASKS)}\n")
+    print(f"Tasks: {len(TASKS)} (ubuntu:22.04 only)")
+    print(f"Coverage: 77/93 SetupBench tasks (82.8%)\n")
 
     # Clean up any existing containers from previous runs
     cleanup_containers()

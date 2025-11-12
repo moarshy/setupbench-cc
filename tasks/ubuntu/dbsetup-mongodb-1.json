@@ -1,0 +1,10 @@
+{
+  "instance_id": "dbsetup-mongodb-1",
+  "success_command": "mongosh benchmark_db --eval \"db.users.countDocuments({})\" | grep -q '[1-9]' && echo \"Setup successful\" || echo \"Setup failed\"",
+  "notes": "Install MongoDB, start the service, and import users.json using mongoimport into benchmark_db.users.",
+  "description": "Basic MongoDB setup task. The agent must install MongoDB, start the service, and import a single JSON file into a specified collection. This task tests basic MongoDB CLI usage and JSON import functionality.",
+  "problem_statement": "You are in a benchmark that evaluates your ability to interpret documentation, install dependencies, configure, and setup projects in a completely minimal environment.\n\nEnvironment Details\nYou are operating inside a fresh Ubuntu 22.04 environment with no tools or packages preinstalled \u2014 not even python3 or build-essential.\n\nKey constraints:\n\nYou must install all required dependencies globally using apt or other system-level installers.\nDo not create or use virtual environments (e.g., no venv, conda, or containerization).\nYour setup should be non-interactive and able to run in a headless CI environment.\nAssume you are starting from scratch \u2014 no assumptions about preinstalled tools.\nYou have root privileges in the environment, so there is no need to use sudo.\n\nTask:\nInstall MongoDB, start the service, and import users.json using mongoimport into benchmark_db.users.\n\nAdditional Instructions:\n- At the end of the setup, you will be evaluated by running a single-line success command to confirm the task was successful.\n\n",
+  "image_tag": "setupbench.eval.x86_64.dbsetup-mongodb-1:msbench-0.0.4",
+  "task_type": "dbsetup",
+  "base_image": "ubuntu:22.04"
+}

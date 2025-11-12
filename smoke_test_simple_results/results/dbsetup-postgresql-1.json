@@ -1,0 +1,25 @@
+{
+  "instance_id": "dbsetup-postgresql-1",
+  "task_type": "dbsetup",
+  "base_image": "ubuntu:22.04",
+  "success": true,
+  "validation_output": "Setup successful\n",
+  "wall_time_seconds": 196.434903,
+  "total_steps": 27,
+  "bash_calls": 23,
+  "read_calls": 3,
+  "write_calls": 0,
+  "edit_calls": 1,
+  "total_tokens": 662472,
+  "input_tokens": 18,
+  "output_tokens": 3574,
+  "cache_creation_input_tokens": 15424,
+  "cache_read_input_tokens": 643456,
+  "errors": 0,
+  "messages": 49,
+  "logs": {
+    "agent.log": "smoke_test_simple_results/logs/dbsetup-postgresql-1/agent.log",
+    "tools.jsonl": "smoke_test_simple_results/logs/dbsetup-postgresql-1/tools.jsonl",
+    "messages.jsonl": "smoke_test_simple_results/logs/dbsetup-postgresql-1/messages.jsonl"
+  }
+}

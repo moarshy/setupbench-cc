@@ -7,8 +7,9 @@ A Python package for running Claude Code agent on the SetupBench environment-boo
 - ✅ **Two Execution Modes**: Local (for testing) and Docker (SetupBench-compliant)
 - ✅ **In-Container Execution**: Agent runs INSIDE Docker containers (matches SetupBench paper)
 - ✅ **Comprehensive Logging**: Three-tiered logging system (agent.log, tools.jsonl, messages.jsonl)
-- ✅ **Token Tracking**: Full token usage extraction from Claude Agent SDK 2.0
+- ✅ **Token Tracking**: Full token usage breakdown (input, output, cache creation, cache read)
 - ✅ **Fresh Shell Validation**: Matches SetupBench paper methodology exactly
+- ✅ **Ubuntu 22.04 Support**: Covers 77/93 tasks (82.8% of SetupBench)
 
 ## Execution Modes
 

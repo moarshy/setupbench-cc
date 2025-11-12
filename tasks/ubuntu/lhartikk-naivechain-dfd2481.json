@@ -1,0 +1,25 @@
+{
+  "language": "javascript",
+  "repo_url": "https://github.com/lhartikk/naivechain",
+  "license_spdx": "Apache-2.0",
+  "commit_hash": "dfd2481e7158f72e54fba4ce0bd2f48d0a44945e",
+  "build_commands": [
+    "npm install"
+  ],
+  "success_command": "verify_multi_worker() { HTTP_PORT=3001 P2P_PORT=6001 npm start & pid1=$!; sleep 45; HTTP_PORT=3002 P2P_PORT=6002 PEERS=ws://localhost:6001 npm start & pid2=$!; sleep 45; code=$(curl -s -H \"Content-type:application/json\" --data '{\"data\" : \"Some data to the first block\"}' -o /dev/null -w \"%{http_code}\" http://localhost:3001/mineBlock); [ $code -eq 200 ] && echo \"Setup successful\" || echo \"Setup failed\"; pgid1=$(ps -o pgid= $pid1 | tr -d ' '); pgid2=$(ps -o pgid= $pid2 | tr -d ' '); kill -TERM -$pgid1 2>/dev/null; kill -TERM -$pgid2 2>/dev/null; }; verify_multi_worker || echo \"Setup failed\"",
+  "instance_id": "lhartikk-naivechain-dfd2481",
+  "image_tag": "setupbench.eval.x86_64.lhartikk-naivechain-dfd2481:msbench-0.0.4",
+  "problem_statement": "You are in a benchmark that evaluates your ability to interpret documentation, install dependencies, configure, and build real-world open-source projects in a completely minimal environment.\n\nEnvironment Details\nYou are operating inside a fresh Ubuntu 22.04 environment with no tools or packages preinstalled \u2014 not even python3 or build-essential.\n\nKey constraints:\n\nYou must install all required dependencies globally using apt or other system-level installers.\nDo not create or use virtual environments (e.g., no venv, conda, or containerization).\nYour setup should be non-interactive and able to run in a headless CI environment.\nAssume you are starting from scratch \u2014 no assumptions about preinstalled tools.\nYou have root privileges in the environment, so there is no need to use sudo.\n\nTask:\nYou must fully set up a GitHub repository. This may include installing dependencies, compiling and building the project, starting a server, etc. depending on the repository. Utilize the README and other documentation present in the repo the guide and inform your setup process.\n\nRepository URL:\nhttps://github.com/lhartikk/naivechain\n\n\nAdditional Instructions:\n- The repository has been cloned into the /testbed directory so that the root of the GitHub repository maps directly to /testbed. \n- At the end of the setup, you will be evaluated by running a single-line success command to confirm the build was successful.\n",
+  "start_new_session": true,
+  "task_type": "reposetup",
+  "base_image": "ubuntu:22.04",
+  "human_actions_lower_bound": {
+    "check_dir": 1,
+    "read_file": 1
+  },
+  "human_actions_upper_bound": {
+    "check_dir": 1,
+    "read_file": 3
+  },
+  "base_commit": "dfd2481e7158f72e54fba4ce0bd2f48d0a44945e"
+}

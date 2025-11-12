@@ -1,0 +1,10 @@
+{
+  "instance_id": "dbsetup-mysql-2",
+  "success_command": "mysql -u root -e \"USE benchmark_db; SHOW TABLES;\" | grep -q products && echo \"Setup successful\" || echo \"Setup failed\"",
+  "notes": "Install MySQL and apply the .sql.gz files in /testbed/migrations in order. You must create a database named benchmark_db and configure root login to allow password access. Ensure the character set utf8mb4 is used.",
+  "description": "Intermediate MySQL setup task using multiple compressed SQL migration files with foreign key constraints. The agent must apply them in the correct order and configure the server to use utf8mb4 character set. Authentication must be adjusted to allow root password login.",
+  "problem_statement": "You are in a benchmark that evaluates your ability to interpret documentation, install dependencies, configure, and setup projects in a completely minimal environment.\n\nEnvironment Details\nYou are operating inside a fresh Ubuntu 22.04 environment with no tools or packages preinstalled \u2014 not even python3 or build-essential.\n\nKey constraints:\n\nYou must install all required dependencies globally using apt or other system-level installers.\nDo not create or use virtual environments (e.g., no venv, conda, or containerization).\nYour setup should be non-interactive and able to run in a headless CI environment.\nAssume you are starting from scratch \u2014 no assumptions about preinstalled tools.\nYou have root privileges in the environment, so there is no need to use sudo.\n\nTask:\nInstall MySQL and apply the .sql.gz files in /testbed/migrations in order. You must create a database named benchmark_db and configure root login to allow password access. Ensure the character set utf8mb4 is used.\n\nAdditional Instructions:\n- At the end of the setup, you will be evaluated by running a single-line success command to confirm the task was successful.\n\n",
+  "image_tag": "setupbench.eval.x86_64.dbsetup-mysql-2:msbench-0.0.4",
+  "task_type": "dbsetup",
+  "base_image": "ubuntu:22.04"
+}

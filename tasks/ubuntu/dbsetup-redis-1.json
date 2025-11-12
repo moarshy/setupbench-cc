@@ -1,0 +1,10 @@
+{
+  "instance_id": "dbsetup-redis-1",
+  "success_command": "redis-cli GET init_check | grep -q \"done\" && echo \"Setup successful\" || echo \"Setup failed\"",
+  "notes": "Install Redis, use redis-cli --eval to run an initialization Lua script that sets the 'init_check' key.",
+  "description": "Basic Redis setup task. The agent must install Redis and run a Lua script using redis-cli --eval to set a key in the database. This task tests basic Redis CLI usage and Lua script execution functionality.",
+  "problem_statement": "You are in a benchmark that evaluates your ability to interpret documentation, install dependencies, configure, and setup projects in a completely minimal environment.\n\nEnvironment Details\nYou are operating inside a fresh Ubuntu 22.04 environment with no tools or packages preinstalled \u2014 not even python3 or build-essential.\n\nKey constraints:\n\nYou must install all required dependencies globally using apt or other system-level installers.\nDo not create or use virtual environments (e.g., no venv, conda, or containerization).\nYour setup should be non-interactive and able to run in a headless CI environment.\nAssume you are starting from scratch \u2014 no assumptions about preinstalled tools.\nYou have root privileges in the environment, so there is no need to use sudo.\n\nTask:\nInstall Redis, use redis-cli --eval to run an initialization Lua script that sets the 'init_check' key.\n\nAdditional Instructions:\n- At the end of the setup, you will be evaluated by running a single-line success command to confirm the task was successful.\n\n",
+  "image_tag": "setupbench.eval.x86_64.dbsetup-redis-1:msbench-0.0.4",
+  "task_type": "dbsetup",
+  "base_image": "ubuntu:22.04"
+}

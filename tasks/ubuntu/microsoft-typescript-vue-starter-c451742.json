@@ -1,0 +1,23 @@
+{
+  "language": "typescript",
+  "repo_url": "https://github.com/microsoft/TypeScript-Vue-Starter",
+  "license_spdx": "MIT",
+  "success_command": "yarn test && echo \"Setup successful\" || echo \"Setup failed\"",
+  "problem_statement": "You are in a benchmark that evaluates your ability to interpret documentation, install dependencies, configure, and build real-world open-source projects in a completely minimal environment.\n\nEnvironment Details\nYou are operating inside a fresh Ubuntu 22.04 environment with no tools or packages preinstalled \u2014 not even python3 or build-essential.\n\nKey constraints:\n\nYou must install all required dependencies globally using apt or other system-level installers.\nDo not create or use virtual environments (e.g., no venv, conda, or containerization).\nYour setup should be non-interactive and able to run in a headless CI environment.\nAssume you are starting from scratch \u2014 no assumptions about preinstalled tools.\nYou have root privileges in the environment, so there is no need to use sudo.\n\nTask:\nYou must fully set up a GitHub repository. This may include installing dependencies, compiling and building the project, starting a server, etc. depending on the repository. Utilize the README and other documentation present in the repo the guide and inform your setup process.\n\nRepository URL:\nhttps://github.com/microsoft/TypeScript-Vue-Starter\n\n\nAdditional Instructions:\n- The repository has been cloned into the /testbed directory so that the root of the GitHub repository maps directly to /testbed. \n- At the end of the setup, you will be evaluated by running a single-line success command to confirm the build was successful.\n",
+  "instance_id": "microsoft-typescript-vue-starter-c451742",
+  "image_tag": "setupbench.eval.x86_64.microsoft-typescript-vue-starter-c451742:msbench-0.0.4",
+  "task_type": "reposetup",
+  "base_image": "ubuntu:22.04",
+  "human_actions_lower_bound": {
+    "check_dir": 1,
+    "read_file": 0
+  },
+  "human_actions_upper_bound": {
+    "check_dir": 1,
+    "read_file": 2
+  },
+  "build_commands": [
+    "yarn install"
+  ],
+  "base_commit": "c4517422dac9a539f899d11709ca9f560e51937b"
+}

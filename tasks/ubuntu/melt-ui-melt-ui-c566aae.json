@@ -1,0 +1,26 @@
+{
+  "language": "typescript",
+  "repo_url": "https://github.com/melt-ui/melt-ui",
+  "license_spdx": "MIT",
+  "commit_hash": "c566aae9e468945c614b3dea96e3a346c1bd6e33",
+  "build_commands": [
+    "pnpm install",
+    "pnpm build"
+  ],
+  "success_command": "verify_web() { pnpm run dev & pid=$!; sleep 90; code=$(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:5173); [ $code -eq 200 ] && echo \"Setup successful\" || echo \"Setup failed\"; pgid=$(ps -o pgid= $pid | tr -d ' '); kill -TERM -$pgid 2>/dev/null; }; verify_web || echo \"Setup failed\"",
+  "instance_id": "melt-ui-melt-ui-c566aae",
+  "image_tag": "setupbench.eval.x86_64.melt-ui-melt-ui-c566aae:msbench-0.0.4",
+  "problem_statement": "You are in a benchmark that evaluates your ability to interpret documentation, install dependencies, configure, and build real-world open-source projects in a completely minimal environment.\n\nEnvironment Details\nYou are operating inside a fresh Ubuntu 22.04 environment with no tools or packages preinstalled \u2014 not even python3 or build-essential.\n\nKey constraints:\n\nYou must install all required dependencies globally using apt or other system-level installers.\nDo not create or use virtual environments (e.g., no venv, conda, or containerization).\nYour setup should be non-interactive and able to run in a headless CI environment.\nAssume you are starting from scratch \u2014 no assumptions about preinstalled tools.\nYou have root privileges in the environment, so there is no need to use sudo.\n\nTask:\nYou must fully set up a GitHub repository. This may include installing dependencies, compiling and building the project, starting a server, etc. depending on the repository. Utilize the README and other documentation present in the repo the guide and inform your setup process.\n\nRepository URL:\nhttps://github.com/melt-ui/melt-ui\n\n\nAdditional Instructions:\n- The repository has been cloned into the /testbed directory so that the root of the GitHub repository maps directly to /testbed. \n- At the end of the setup, you will be evaluated by running a single-line success command to confirm the build was successful.\n",
+  "start_new_session": true,
+  "task_type": "reposetup",
+  "base_image": "ubuntu:22.04",
+  "human_actions_lower_bound": {
+    "check_dir": 1,
+    "read_file": 2
+  },
+  "human_actions_upper_bound": {
+    "check_dir": 4,
+    "read_file": 8
+  },
+  "base_commit": "c566aae9e468945c614b3dea96e3a346c1bd6e33"
+}

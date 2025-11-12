@@ -17,6 +17,8 @@ RUN if command -v apt-get >/dev/null 2>&1; then \
             ca-certificates \
             curl \
             gnupg && \
+        # Upgrade pip to latest version (fixes ruby:2.7 compatibility)
+        python3 -m pip install --upgrade pip && \
         # Install Node.js 20.x from NodeSource \
         curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && \
         apt-get install -y nodejs && \
