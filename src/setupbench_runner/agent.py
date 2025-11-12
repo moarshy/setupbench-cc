@@ -178,7 +178,14 @@ async def run_agent(
         hooks=create_hooks(logger)
     )
 
-    total_tokens = 0
+    # Track token usage
+    token_usage = {
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_creation_input_tokens": 0,
+        "cache_read_input_tokens": 0,
+        "total_tokens": 0
+    }
 
     # Run agent
     async with ClaudeSDKClient(options=options) as client:
@@ -212,19 +219,23 @@ async def run_agent(
                 # Extract token usage from ResultMessage
                 if message.usage:
                     usage = message.usage
-                    # Calculate total tokens: input + output + cache tokens
+                    # Track all token types
                     input_tokens = usage.get("input_tokens", 0)
                     output_tokens = usage.get("output_tokens", 0)
                     cache_creation = usage.get("cache_creation_input_tokens", 0)
                     cache_read = usage.get("cache_read_input_tokens", 0)
 
-                    total_tokens = input_tokens + output_tokens + cache_creation + cache_read
+                    token_usage["input_tokens"] = input_tokens
+                    token_usage["output_tokens"] = output_tokens
+                    token_usage["cache_creation_input_tokens"] = cache_creation
+                    token_usage["cache_read_input_tokens"] = cache_read
+                    token_usage["total_tokens"] = input_tokens + output_tokens + cache_creation + cache_read
 
                     logger.log_message(
                         f"Token usage: input={input_tokens}, output={output_tokens}, "
                         f"cache_creation={cache_creation}, cache_read={cache_read}, "
-                        f"total={total_tokens}",
+                        f"total={token_usage['total_tokens']}",
                         level="INFO"
                     )
 
-    return total_tokens
+    return token_usage

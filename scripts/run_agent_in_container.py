@@ -66,7 +66,7 @@ async def main():
 
     # Run agent with /testbed as workspace
     try:
-        total_tokens = await run_agent(
+        token_usage = await run_agent(
             task=task,
             workspace=Path("/testbed"),
             logger=logger,
@@ -75,7 +75,7 @@ async def main():
 
         # Write metrics to file for harness to collect
         metrics = {
-            "total_tokens": total_tokens,
+            **token_usage,  # Include all token breakdown
             **logger.get_stats()
         }
 
@@ -83,7 +83,7 @@ async def main():
         with open(metrics_file, 'w') as f:
             json.dump(metrics, f, indent=2)
 
-        logger.log_message(f"Agent execution completed. Tokens: {total_tokens}")
+        logger.log_message(f"Agent execution completed. Tokens: {token_usage['total_tokens']}")
 
     except Exception as e:
         logger.log_message(f"Agent execution failed: {e}", level="ERROR")

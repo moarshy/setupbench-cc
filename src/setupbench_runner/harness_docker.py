@@ -154,7 +154,13 @@ async def run_task_v2(
         "read_calls": metrics.get("read_calls", 0),
         "write_calls": metrics.get("write_calls", 0),
         "edit_calls": metrics.get("edit_calls", 0),
+        # Token usage breakdown
         "total_tokens": metrics.get("total_tokens", 0),
+        "input_tokens": metrics.get("input_tokens", 0),
+        "output_tokens": metrics.get("output_tokens", 0),
+        "cache_creation_input_tokens": metrics.get("cache_creation_input_tokens", 0),
+        "cache_read_input_tokens": metrics.get("cache_read_input_tokens", 0),
+        # Other metrics
         "errors": metrics.get("errors", 0),
         "messages": metrics.get("messages", 0),
         "logs": {k: str(v) for k, v in log_files.items()}
@@ -195,7 +201,13 @@ def create_error_result_v2(
         "read_calls": 0,
         "write_calls": 0,
         "edit_calls": 0,
+        # Token usage breakdown (all zero for errors)
         "total_tokens": 0,
+        "input_tokens": 0,
+        "output_tokens": 0,
+        "cache_creation_input_tokens": 0,
+        "cache_read_input_tokens": 0,
+        # Other metrics
         "errors": 1,
         "messages": 0,
         "logs": {}
