@@ -84,8 +84,8 @@ def create_hooks(logger: SetupBenchLogger) -> Dict[str, Any]:
     async def pre_tool_hook(input_data: Dict[str, Any], tool_use_id: Optional[str],
                            context: Any) -> Dict[str, Any]:  # noqa: ARG001 - Required by hook signature
         """Log before tool execution."""
-        tool_name = input_data.get("name", "Unknown")
-        tool_input = input_data.get("input", {})
+        tool_name = input_data.get("tool_name", "unknown")
+        tool_input = input_data.get("tool_input", {})
 
         # Log to human-readable log
         if tool_name == "Bash":
@@ -110,8 +110,8 @@ def create_hooks(logger: SetupBenchLogger) -> Dict[str, Any]:
     async def post_tool_hook(result: Dict[str, Any], tool_use_id: Optional[str],
                             context: Any) -> Dict[str, Any]:  # noqa: ARG001 - Required by hook signature
         """Log after tool execution."""
-        tool_name = result.get("name", "Unknown")
-        tool_output = result.get("output", {})
+        tool_name = result.get("tool_name", "unknown")
+        tool_output = result.get("tool_output", {})
         error = result.get("error")
 
         # Log to structured tools.jsonl
