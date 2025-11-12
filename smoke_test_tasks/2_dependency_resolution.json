@@ -1,0 +1,16 @@
+{
+  "ecosystem": "bundler-compat",
+  "repo": "tandusrl/acts_as_bookable",
+  "issue_number": 30,
+  "issue_url": "https://github.com/tandusrl/acts_as_bookable/issues/30",
+  "comment_id": 445423175,
+  "snippet": "Bundler could not find compatible versions for gem \"activemodel\":\nBundler could not find compatible versions for gem \"activerecord\":\nBundler could not find compatible versions for gem \"activesupport\":\nBundler could not find compatible versions for gem \"railties\":",
+  "base_commit": "45b78114e1a5dab96e59fc70933277a56f65b53b",
+  "success_command": "bundle install --jobs=1 --retry=2 --without development test",
+  "instance_id": "deps-acts_as_bookable-45b78",
+  "problem_statement": "\nThere is a dependency conflict in this project when running bundle install --jobs=1 --retry=2 --without development test. Please resolve the dependency conflict so that the command can run successfully.\n",
+  "task_type": "dependency_resolution",
+  "base_image": "ruby:2.7",
+  "repo_url": "https://github.com/tandusrl/acts_as_bookable",
+  "image_tag": "setupbench.eval.x86_64.deps-acts_as_bookable-45b78:msbench-0.0.4"
+}

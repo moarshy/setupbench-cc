@@ -1,0 +1,12 @@
+{
+  "language": "python",
+  "repo_url": "https://github.com/madmaze/pytesseract",
+  "license_spdx": "Apache-2.0",
+  "success_command": "python3 -c \"import pytesseract; print(pytesseract.get_tesseract_version())\" > /dev/null 2>&1 && echo 'Setup successful' || echo 'Setup failed'",
+  "problem_statement": "You are in a benchmark that evaluates your ability to interpret documentation, install dependencies, configure, and build real-world open-source projects in a completely minimal environment.\n\nEnvironment Details\nYou are operating inside a fresh Ubuntu 22.04 environment with no tools or packages preinstalled — not even python3 or build-essential.\n\nKey constraints:\n\nYou must install all required dependencies globally using apt or other system-level installers.\nDo not create or use virtual environments (e.g., no venv, conda, or containerization).\nYour setup should be non-interactive and able to run in a headless CI environment.\nAssume you are starting from scratch — no assumptions about preinstalled tools.\n\nTask:\nYou must fully set up a GitHub repository. This may include installing dependencies, compiling and building the project, starting a server, etc. depending on the repository. Utilize the README and other documentation present in the repo the guide and inform your setup process.\n\nRepository URL:\nhttps://github.com/madmaze/pytesseract\n\n\nAdditional Instructions:\n- The repository has been cloned into the /testbed directory so that the root of the GitHub repository maps directly to /testbed. \n- At the end of the setup, you will be evaluated by running a single-line success command to confirm the build was successful.\n- \n",
+  "base_commit": "df9fce0b5c5ea3cd9182fce8870ab9241d951173",
+  "instance_id": "pytesseract-df9fce0",
+  "image_tag": "setupbench.eval.x86_64.pytesseract-df9fce0:msbench-0.0.4",
+  "task_type": "reposetup",
+  "base_image": "ubuntu:22.04"
+}

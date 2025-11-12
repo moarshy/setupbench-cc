@@ -64,6 +64,7 @@ pyrightconfig.json
 
 # SetupBench Output
 setupbench_output/
+setupbench_output_docker/
 test*.json
 *.log
 
@@ -84,6 +85,3 @@ test*.json
 Network Trash Folder
 Temporary Items
 .apdisk
-
-# Old implementation (legacy)
-run_setupbench.py

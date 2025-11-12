@@ -50,8 +50,8 @@ async def main():
     # Set API key in environment
     os.environ['ANTHROPIC_API_KEY'] = api_key
 
-    # Setup logging - write to /testbed/.agent_logs/
-    log_dir = Path("/testbed/.agent_logs")
+    # Setup logging - write to /logs/ (separate from workspace)
+    log_dir = Path("/logs")
     log_dir.mkdir(parents=True, exist_ok=True)
 
     logger = SetupBenchLogger(
@@ -79,7 +79,7 @@ async def main():
             **logger.get_stats()
         }
 
-        metrics_file = Path("/testbed/.agent_metrics.json")
+        metrics_file = Path("/logs/metrics.json")
         with open(metrics_file, 'w') as f:
             json.dump(metrics, f, indent=2)
 
@@ -94,7 +94,7 @@ async def main():
             **logger.get_stats()
         }
 
-        metrics_file = Path("/testbed/.agent_metrics.json")
+        metrics_file = Path("/logs/metrics.json")
         with open(metrics_file, 'w') as f:
             json.dump(metrics, f, indent=2)
 

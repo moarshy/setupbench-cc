@@ -4,11 +4,63 @@ A Python package for running Claude Code agent on the SetupBench environment-boo
 
 ## Features
 
-- ✅ **Modular Architecture**: Clean separation of concerns (agent, logging, docker, harness)
+- ✅ **Two Execution Modes**: Local (for testing) and Docker (SetupBench-compliant)
+- ✅ **In-Container Execution**: Agent runs INSIDE Docker containers (matches SetupBench paper)
 - ✅ **Comprehensive Logging**: Three-tiered logging system (agent.log, tools.jsonl, messages.jsonl)
-- ✅ **Docker Support**: Run tasks in proper containerized environments
 - ✅ **Token Tracking**: Full token usage extraction from Claude Agent SDK 2.0
 - ✅ **Fresh Shell Validation**: Matches SetupBench paper methodology exactly
+
+## Execution Modes
+
+### Local Mode (v1 - For Testing Only)
+
+**How it works:**
+- Agent runs on your **host system** (macOS, Linux, etc.)
+- Bash commands execute on host
+- Validation runs in Docker container
+
+**Use when:**
+- Quick testing and debugging
+- Developing the agent code
+- Not evaluating against SetupBench benchmark
+
+**Limitations:**
+- ❌ **Does NOT match SetupBench methodology**
+- ❌ Agent installs packages on host, validation looks in Docker → failures
+- ❌ Results not comparable to SetupBench paper baseline
+
+```bash
+python -m setupbench_runner.harness_local --task task.json
+```
+
+### Docker Mode (SetupBench-Compliant) ⭐ **RECOMMENDED**
+
+**How it works:**
+- Agent runs **INSIDE** Docker container (ubuntu:22.04, python:3.9, etc.)
+- All Bash/Read/Write operations happen in container
+- Validation runs in same container (fresh shell)
+
+**Use when:**
+- Running SetupBench evaluation
+- Comparing results to paper baseline
+- Producing publishable results
+
+**Benefits:**
+- ✅ **Matches SetupBench paper methodology exactly**
+- ✅ Agent and validation share same environment
+- ✅ Results comparable to paper baseline (62.4% success rate)
+
+```bash
+python -m setupbench_runner.harness_docker --task task.json
+```
+
+### Why Two Modes?
+
+SetupBench tasks are designed to test agents' ability to bootstrap development environments **from scratch**. The paper's evaluation methodology requires:
+
+> "The harness launches the agent inside a Docker container with the specified base image, then validates setup in a fresh terminal subprocess within the same container."
+
+**Local mode** was our initial implementation but doesn't match this requirement. **Docker mode** is the correct implementation that matches the paper.
 
 ## Quick Start
 
@@ -51,15 +103,33 @@ git clone https://github.com/microsoft/SetupBench
 
 ### 5. Run Tasks
 
+#### Docker Mode (Recommended for SetupBench evaluation)
+
 ```bash
-# Single task
-setupbench-runner --task path/to/task.json
+# Single task - Docker mode
+python -m setupbench_runner.harness_docker --task path/to/task.json
 
-# Multiple tasks
-setupbench-runner --dataset path/to/tasks/ --limit 5
+# Multiple tasks - Docker mode
+python -m setupbench_runner.harness_docker --dataset path/to/tasks/ --limit 5
 
-# All tasks
-setupbench-runner --dataset path/to/tasks/
+# Example: Run PostgreSQL task from SetupBench scenarios
+python -m setupbench_runner.harness_docker --task ../SetupBench/setupbench/scenarios/database_setup.jsonl
+
+# Note: The harness will automatically:
+# 1. Build agent Docker image for the task's base_image
+# 2. Start container with agent inside
+# 3. Execute setup operations in container
+# 4. Validate in same container (fresh shell)
+```
+
+#### Local Mode (For quick testing only)
+
+```bash
+# Single task - Local mode (not SetupBench-compliant)
+python -m setupbench_runner.harness_local --task path/to/task.json
+
+# Multiple tasks - Local mode
+python -m setupbench_runner.harness_local --dataset path/to/tasks/ --limit 5
 ```
 
 ## Project Structure
@@ -68,13 +138,20 @@ setupbench-runner --dataset path/to/tasks/
 setupbench-runner/
 ├── src/setupbench_runner/
 │   ├── __init__.py          # Package initialization
-│   ├── agent.py             # Claude Code agent logic
+│   ├── agent.py             # Claude Code agent core logic
 │   ├── agent_logging.py     # Logging infrastructure
-│   ├── docker.py            # Docker container support
-│   └── harness.py           # Main orchestration & CLI
+│   ├── agent_docker.py      # Docker image building & agent containers
+│   ├── docker.py            # Docker container utilities
+│   ├── harness_local.py     # Local execution (host-based, for testing)
+│   └── harness_docker.py    # Docker execution (SetupBench-compliant)
 ├── scripts/
-│   └── restart_docker.sh    # Docker restart helper (macOS)
-├── docs/                    # Documentation
+│   ├── run_agent_in_container.py  # Agent entry point for Docker execution
+│   └── restart_docker.sh          # Docker restart helper (macOS)
+├── docs/
+│   ├── ARCHITECTURE_FIX.md        # Explanation of execution architecture
+│   ├── setupbench-summary.md      # SetupBench paper summary
+│   └── benchmark-construction.md  # How SetupBench was built
+├── Dockerfile.agent         # Builds agent images on top of base images
 ├── pyproject.toml           # Package configuration
 └── README.md                # This file
 ```
@@ -159,6 +236,91 @@ From SetupBench paper (Table 2):
 
 Run on the full benchmark to compare!
 
+## How Docker Execution Works (v2)
+
+### Architecture
+
+```
+┌──────────────────────────────────────────────────────┐
+│              Host System (macOS/Linux)               │
+│                                                      │
+│  Harness (Python)                                    │
+│       │                                              │
+│       ├─> Build agent image                         │
+│       │   (base_image + Python + Claude SDK)        │
+│       │                                              │
+│       └─> Start container ──────────────────────┐   │
+│                                                  │   │
+│  ┌───────────────────────────────────────────┐  │   │
+│  │   Docker Container (ubuntu:22.04)         │◄─┘   │
+│  │                                           │      │
+│  │   /testbed/ (mounted from host)          │      │
+│  │   /app/run_agent_in_container.py         │      │
+│  │                                           │      │
+│  │   ┌─────────────────────────────────┐    │      │
+│  │   │  Claude Agent (Python)          │    │      │
+│  │   │  - Bash commands in container   │    │      │
+│  │   │  - Read/Write in /testbed       │    │      │
+│  │   │  - apt-get install postgresql   │    │      │
+│  │   │  - API calls to Anthropic       │    │      │
+│  │   └─────────────────────────────────┘    │      │
+│  │                │                          │      │
+│  │                ▼                          │      │
+│  │   ┌─────────────────────────────────┐    │      │
+│  │   │  Fresh Bash Shell               │    │      │
+│  │   │  (validation command)           │    │      │
+│  │   │  - psql --version  ✓           │    │      │
+│  │   └─────────────────────────────────┘    │      │
+│  └───────────────────────────────────────────┘      │
+└──────────────────────────────────────────────────────┘
+```
+
+### Execution Flow
+
+1. **Image Building**
+   ```bash
+   # Harness builds agent image based on task's base_image
+   # The agent image includes:
+   #   - Python 3 + pip
+   #   - Node.js 20.x (required by claude-agent-sdk)
+   #   - Claude Code CLI (@anthropic-ai/claude-code)
+   #   - Python packages: claude-agent-sdk, python-dotenv, pydantic
+   docker build --build-arg BASE_IMAGE=ubuntu:22.04 \
+                -t setupbench-agent:ubuntu-22.04 \
+                -f Dockerfile.agent .
+   ```
+
+   **Note:** The `claude-agent-sdk` Python package requires the Claude Code CLI (Node.js package) to be installed. The Dockerfile.agent handles this automatically.
+
+2. **Container Start**
+   ```bash
+   # Container started with workspace mounted to /testbed
+   docker run -v workspace:/testbed \
+              -w /testbed \
+              setupbench-agent:ubuntu-22.04
+   ```
+
+3. **Agent Execution**
+   ```bash
+   # Inside container
+   python3 /app/run_agent_in_container.py \
+           '{"instance_id":"dbsetup-postgresql-1", ...}' \
+           'sk-ant-api03-...'
+   ```
+
+4. **Validation**
+   ```bash
+   # Fresh shell in same container
+   /bin/bash -c 'psql --version && echo "Setup successful"'
+   ```
+
+### Why This Works
+
+✅ **Same Environment**: Agent installs PostgreSQL in container, validation finds it in container
+✅ **Persistent Setup**: System packages (apt-get) persist across shells
+✅ **Correct Base Image**: Tasks run in their specified environment (ubuntu:22.04, python:3.9, etc.)
+✅ **Matches Paper**: Exactly follows SetupBench evaluation methodology
+
 ## Key Implementation Details
 
 ### Fresh Shell Validation (Critical!)
@@ -166,9 +328,10 @@ Run on the full benchmark to compare!
 Following the paper:
 > "the harness executes a task-specific validation command in a **fresh terminal subprocess**"
 
-Our implementation:
+Docker mode implementation:
 ```python
-subprocess.run(["bash", "-c", task['success_command']], cwd=workspace, ...)
+# In container, fresh shell
+container.exec_run(f"/bin/bash -c '{task['success_command']}'", ...)
 ```
 
 This is why many agents fail - they install packages that work in their shell but don't persist!

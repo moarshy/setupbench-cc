@@ -1,0 +1,10 @@
+{
+  "total_tokens": 807738,
+  "total_tool_calls": 33,
+  "bash_calls": 0,
+  "read_calls": 0,
+  "write_calls": 0,
+  "edit_calls": 0,
+  "errors": 0,
+  "messages": 61
+}

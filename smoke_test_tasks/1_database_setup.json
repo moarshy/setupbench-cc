@@ -1,0 +1,10 @@
+{
+  "instance_id": "dbsetup-postgresql-1",
+  "success_command": "PGPASSWORD=benchmark_pass psql -U benchmark_user -d benchmark_db -c \"SELECT COUNT(*) FROM users;\" | grep -q '[1-9]' && echo \"Setup successful\" || echo \"Setup failed\"",
+  "notes": "Install PostgreSQL, create a database and user, and run the provided schema.sql and seed.sql files.",
+  "description": "Basic PostgreSQL setup task. The agent must install PostgreSQL, create a new database and user, and execute two flat SQL files containing a user table schema and some seed data. This task tests fundamental environment setup and SQL execution skills.",
+  "problem_statement": "You are in a benchmark that evaluates your ability to interpret documentation, install dependencies, configure, and setup projects in a completely minimal environment.\n\nEnvironment Details\nYou are operating inside a fresh Ubuntu 22.04 environment with no tools or packages preinstalled — not even python3 or build-essential.\n\nKey constraints:\n\nYou must install all required dependencies globally using apt or other system-level installers.\nDo not create or use virtual environments (e.g., no venv, conda, or containerization).\nYour setup should be non-interactive and able to run in a headless CI environment.\nAssume you are starting from scratch — no assumptions about preinstalled tools.\nYou have root privileges in the environment, so there is no need to use sudo.\n\nTask:\nInstall PostgreSQL, create a database named benchmark_db and a user named benchmark_user with password benchmark_pass, and run the provided schema.sql and seed.sql files.\n\nAdditional Instructions:\n- At the end of the setup, you will be evaluated by running a single-line success command to confirm the task was successful.\n\n",
+  "image_tag": "setupbench.eval.x86_64.dbsetup-postgresql-1:msbench-0.0.4",
+  "task_type": "dbsetup",
+  "base_image": "ubuntu:22.04"
+}

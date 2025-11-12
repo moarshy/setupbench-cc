@@ -4,7 +4,7 @@
 ARG BASE_IMAGE=ubuntu:22.04
 FROM ${BASE_IMAGE}
 
-# Install Python 3 and pip if not already present
+# Install Python 3, Node.js, and dependencies
 # Use non-interactive frontend to avoid prompts
 ENV DEBIAN_FRONTEND=noninteractive
 
@@ -15,15 +15,23 @@ RUN if command -v apt-get >/dev/null 2>&1; then \
             python3-pip \
             python3-venv \
             ca-certificates \
-            curl && \
+            curl \
+            gnupg && \
+        # Install Node.js 20.x from NodeSource \
+        curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && \
+        apt-get install -y nodejs && \
         rm -rf /var/lib/apt/lists/*; \
     fi
 
 # Install Claude Agent SDK and dependencies
-RUN pip3 install --no-cache-dir --break-system-packages \
+# Note: --break-system-packages not available in Ubuntu 22.04's pip (22.0.2)
+RUN pip3 install --no-cache-dir \
     claude-agent-sdk \
     python-dotenv \
     pydantic
+
+# Install Claude Code CLI (required by claude-agent-sdk)
+RUN npm install -g @anthropic-ai/claude-code
 
 # Copy setupbench_runner package
 COPY src/setupbench_runner /app/setupbench_runner
